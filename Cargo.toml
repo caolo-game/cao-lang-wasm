@@ -3,6 +3,9 @@ name = "cao-lang-wasm"
 version = "0.1.0"
 authors = ["Daniel Kiss <littlesnorrboy@gmail.com>"]
 edition = "2018"
+description="Wrapper of [CaoLang](https://github.com/caolo-game/cao-lang.git)"
+license="Apache version 2.0"
+repository="https://github.com/caolo-game/cao-lang-wasm"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
