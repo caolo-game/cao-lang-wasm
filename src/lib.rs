@@ -54,7 +54,7 @@ impl CompilationUnit {
         }
     }
 
-    #[wasm_bindgen(js_name = setNode)]
+    #[wasm_bindgen(js_name=setNode)]
     pub fn set_node(&mut self, id: i32, node: &AstNode) -> Result<(), JsValue> {
         use cao_lang::compiler;
         let node = compiler::AstNode {
