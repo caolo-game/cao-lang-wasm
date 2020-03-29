@@ -1,3 +1,4 @@
+use cao_lang::compiler::NodeId;
 use serde_derive::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -15,21 +16,17 @@ pub fn init_error_handling() {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AstNode {
     instruction: cao_lang::compiler::InstructionNode,
-    pub child: Option<cao_lang::compiler::NodeId>,
+    pub child: Option<NodeId>,
 }
 
 #[wasm_bindgen(js_class=AstNode)]
 impl AstNode {
     #[wasm_bindgen(constructor)]
-    pub fn new(instruction: JsValue) -> AstNode {
-        let instruction = instruction
-            .into_serde()
-            .expect("Expected InstructionNode instance");
-        let node = Self {
-            instruction,
-            child: None,
-        };
-        node
+    pub fn new(instruction: JsValue, child: Option<NodeId>) -> Result<AstNode, JsValue> {
+        let instruction: cao_lang::compiler::InstructionNode =
+            instruction.into_serde().map_err(|e| err_to_js(&e))?;
+        let node = Self { instruction, child };
+        Ok(node)
     }
 }
 
@@ -55,14 +52,13 @@ impl CompilationUnit {
     }
 
     #[wasm_bindgen(js_name=setNode)]
-    pub fn set_node(&mut self, id: i32, node: &AstNode) -> Result<(), JsValue> {
+    pub fn set_node(&mut self, id: i32, node: &AstNode) {
         use cao_lang::compiler;
         let node = compiler::AstNode {
             node: node.instruction().clone(),
             child: node.child,
         };
         self.inner.nodes.insert(id, node);
-        Ok(())
     }
 }
 
@@ -72,4 +68,8 @@ pub fn compile(compilation_unit: &CompilationUnit) -> Result<(), JsValue> {
     cao_lang::compiler::Compiler::compile(cu)
         .map_err(|e| e.into())
         .map(|_| ())
+}
+
+fn err_to_js(e: &impl std::error::Error) -> JsValue {
+    JsValue::from_serde(&format!("{:?}", e)).unwrap()
 }

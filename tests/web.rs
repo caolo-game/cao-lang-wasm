@@ -16,8 +16,7 @@ fn can_compile_simple_program() {
         "Start": null
     }};
     let start_node = JsValue::from_serde(&start_node).unwrap();
-    let mut start_node = AstNode::new(start_node);
-    start_node.child = Some(1);
+    let start_node = AstNode::new(start_node, Some(1)).unwrap();
 
     let scalar_node: serde_json::Value = serde_json::json! {{
         "ScalarInt": {
@@ -25,7 +24,7 @@ fn can_compile_simple_program() {
         }
     }};
     let scalar_node = JsValue::from_serde(&scalar_node).unwrap();
-    let scalar_node = AstNode::new(scalar_node);
+    let scalar_node = AstNode::new(scalar_node, None).unwrap();
 
     let mut cu: CompilationUnit = CompilationUnit::new();
     cu.set_node(0, &start_node);
