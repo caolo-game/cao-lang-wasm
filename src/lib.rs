@@ -49,12 +49,12 @@ pub struct CompilationUnit {
 impl CompilationUnit {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
-        Self{
-            inner: cao_lang::compiler::CompilationUnit::default()
+        Self {
+            inner: cao_lang::compiler::CompilationUnit::default(),
         }
     }
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_name = setNode)]
     pub fn set_node(&mut self, id: i32, node: &AstNode) -> Result<(), JsValue> {
         use cao_lang::compiler;
         let node = compiler::AstNode {
