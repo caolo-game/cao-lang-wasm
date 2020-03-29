@@ -34,6 +34,10 @@ impl AstNode {
     pub fn instruction(&self) -> &cao_lang::compiler::InstructionNode {
         &self.instruction
     }
+
+    pub fn unwrap_instruction(self) -> cao_lang::compiler::InstructionNode {
+        self.instruction
+    }
 }
 
 #[wasm_bindgen(js_name=CompilationUnit, inspectable)]
@@ -52,13 +56,20 @@ impl CompilationUnit {
     }
 
     #[wasm_bindgen(js_name=setNode)]
-    pub fn set_node(&mut self, id: i32, node: &AstNode) {
+    pub fn set_node(&mut self, id: i32, node: AstNode) {
         use cao_lang::compiler;
+        let child = node.child;
         let node = compiler::AstNode {
-            node: node.instruction().clone(),
-            child: node.child,
+            child,
+            node: node.unwrap_instruction(),
         };
         self.inner.nodes.insert(id, node);
+    }
+
+    #[wasm_bindgen(js_name=withNode)]
+    pub fn with_node(mut self, id: i32, node: AstNode) -> Self {
+        self.set_node(id, node);
+        self
     }
 }
 

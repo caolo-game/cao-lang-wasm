@@ -12,23 +12,23 @@ use wasm_bindgen::JsValue;
 
 #[wasm_bindgen_test]
 fn can_compile_simple_program() {
-    let start_node: serde_json::Value = serde_json::json! {{
+    let start_node = serde_json::json! {{
         "Start": null
     }};
     let start_node = JsValue::from_serde(&start_node).unwrap();
     let start_node = AstNode::new(start_node, Some(1)).unwrap();
 
-    let scalar_node: serde_json::Value = serde_json::json! {{
+    let scalar_node = serde_json::json! {{
         "ScalarInt": {
-          "value": 69
+            "value": 69
         }
     }};
     let scalar_node = JsValue::from_serde(&scalar_node).unwrap();
     let scalar_node = AstNode::new(scalar_node, None).unwrap();
 
-    let mut cu: CompilationUnit = CompilationUnit::new();
-    cu.set_node(0, &start_node);
-    cu.set_node(1, &scalar_node);
+    let cu = CompilationUnit::new()
+        .with_node(0, start_node)
+        .with_node(1, scalar_node);
 
     compile(&cu).unwrap();
 }
