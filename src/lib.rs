@@ -76,7 +76,7 @@ impl CompilationUnit {
 #[wasm_bindgen]
 pub fn compile(compilation_unit: &CompilationUnit) -> Result<(), JsValue> {
     let cu = compilation_unit.inner.clone();
-    cao_lang::compiler::Compiler::compile(cu)
+    cao_lang::compiler::compile(cu)
         .map_err(|e| e.into())
         .map(|_| ())
 }
