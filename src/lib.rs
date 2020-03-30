@@ -77,7 +77,7 @@ impl CompilationUnit {
 pub fn compile(compilation_unit: &CompilationUnit) -> Result<(), JsValue> {
     let cu = compilation_unit.inner.clone();
     cao_lang::compiler::compile(cu)
-        .map_err(|e| e.into())
+        .map_err(|e| format!("{}", e).into())
         .map(|_| ())
 }
 
