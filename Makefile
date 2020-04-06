@@ -2,7 +2,7 @@ build:
 	wasm-pack build --scope caolo-game
 
 test:
-	cargo test
+	cargo check
 	wasm-pack test --firefox --headless
 	wasm-pack test --chrome --headless
 
