@@ -69,6 +69,9 @@ impl CompilationUnit {
         })
     }
 
+    /// Gets a node by `id`. If the node was not found returns `null`.
+    /// Note that this method will copy the node! If you want to persist changes to the node, use
+    /// `nodeSet` once you're done!
     #[wasm_bindgen(js_name=nodeGet)]
     pub fn get_node(&self, id: i32) -> Option<AstNode> {
         self.inner.nodes.get(&id).map(|node| AstNode {
@@ -87,7 +90,45 @@ impl CompilationUnit {
         self.inner.nodes.insert(id, node);
     }
 
-    #[wasm_bindgen(js_name=withNode)]
+    #[wasm_bindgen(js_name=blockSet)]
+    pub fn set_block(&mut self, name: &str, start: NodeId) {
+        let blocks = self.inner.blocks.get_or_insert_with(|| Default::default());
+        blocks.insert(name.to_owned(), cc::Block { start });
+    }
+
+    /// Gets a block by `name`. If the block was not found returns `null`.
+    /// Note that this method will copy the block! If you want to persist changes to the block, use
+    /// `blockSet` once you're done!
+    #[wasm_bindgen(js_name=blockGet)]
+    pub fn get_block(&self, name: &str) -> JsValue {
+        let block = self
+            .inner
+            .blocks
+            .as_ref()
+            .and_then(|blocks| blocks.get(name));
+
+        JsValue::from_serde(&block).unwrap()
+    }
+
+    #[wasm_bindgen(js_name=blockHas)]
+    pub fn has_block(&self, name: &str) -> bool {
+        self.inner
+            .blocks
+            .as_ref()
+            .map(|blocks| blocks.contains_key(name))
+            .unwrap_or(false)
+    }
+
+    /// Does nothing if `this` does not contain the block.
+    #[wasm_bindgen(js_name=blockDel)]
+    pub fn del_block(&mut self, name: &str) {
+        if let Some(blocks) = self.inner.blocks.as_mut() {
+            blocks.remove(name);
+        }
+    }
+}
+
+impl CompilationUnit {
     pub fn with_node(mut self, id: i32, node: AstNode) -> Self {
         self.set_node(id, node);
         self
