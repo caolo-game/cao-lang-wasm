@@ -90,40 +90,40 @@ impl CompilationUnit {
         self.inner.nodes.insert(id, node);
     }
 
-    #[wasm_bindgen(js_name=blockSet)]
-    pub fn set_block(&mut self, name: &str, start: NodeId) {
-        let blocks = self.inner.blocks.get_or_insert_with(|| Default::default());
-        blocks.insert(name.to_owned(), cc::Block { start });
+    #[wasm_bindgen(js_name=subProgramSet)]
+    pub fn set_sub_program(&mut self, name: &str, start: NodeId) {
+        let sub_programs = self.inner.sub_programs.get_or_insert_with(|| Default::default());
+        sub_programs.insert(name.to_owned(), cc::SubProgram { start });
     }
 
-    /// Gets a block by `name`. If the block was not found returns `null`.
-    /// Note that this method will copy the block! If you want to persist changes to the block, use
-    /// `blockSet` once you're done!
-    #[wasm_bindgen(js_name=blockGet)]
-    pub fn get_block(&self, name: &str) -> JsValue {
-        let block = self
+    /// Gets a sub_program by `name`. If the sub_program was not found returns `null`.
+    /// Note that this method will copy the sub_program! If you want to persist changes to the sub_program, use
+    /// `sub_programSet` once you're done!
+    #[wasm_bindgen(js_name=subProgramGet)]
+    pub fn get_sub_program(&self, name: &str) -> JsValue {
+        let sub_program = self
             .inner
-            .blocks
+            .sub_programs
             .as_ref()
-            .and_then(|blocks| blocks.get(name));
+            .and_then(|sub_programs| sub_programs.get(name));
 
-        JsValue::from_serde(&block).unwrap()
+        JsValue::from_serde(&sub_program).unwrap()
     }
 
-    #[wasm_bindgen(js_name=blockHas)]
-    pub fn has_block(&self, name: &str) -> bool {
+    #[wasm_bindgen(js_name=sub_programHas)]
+    pub fn has_sub_program(&self, name: &str) -> bool {
         self.inner
-            .blocks
+            .sub_programs
             .as_ref()
-            .map(|blocks| blocks.contains_key(name))
+            .map(|sub_programs| sub_programs.contains_key(name))
             .unwrap_or(false)
     }
 
-    /// Does nothing if `this` does not contain the block.
-    #[wasm_bindgen(js_name=blockDel)]
-    pub fn del_block(&mut self, name: &str) {
-        if let Some(blocks) = self.inner.blocks.as_mut() {
-            blocks.remove(name);
+    /// Does nothing if `this` does not contain the sub_program.
+    #[wasm_bindgen(js_name=subProgramDel)]
+    pub fn del_sub_program(&mut self, name: &str) {
+        if let Some(sub_programs) = self.inner.sub_programs.as_mut() {
+            sub_programs.remove(name);
         }
     }
 }
