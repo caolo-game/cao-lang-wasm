@@ -150,11 +150,15 @@ impl CompilationUnit {
 }
 
 #[wasm_bindgen]
-pub fn compile(compilation_unit: &CompilationUnit) -> Result<(), JsValue> {
+pub fn compile(compilation_unit: &CompilationUnit) -> js_sys::Promise {
     let cu = compilation_unit.inner.clone();
-    cc::compile(cu)
-        .map_err(|e| format!("{}", e).into())
-        .map(|_| ())
+    let f = async move {
+        cc::compile(cu)
+            .map_err(|e| format!("{}", e))
+            .map_err(|e| JsValue::from_serde(&e).unwrap())
+            .map(|_| JsValue::null())
+    };
+    wasm_bindgen_futures::future_to_promise(f)
 }
 
 fn err_to_js(e: impl std::error::Error) -> JsValue {
