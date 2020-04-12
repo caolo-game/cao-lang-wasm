@@ -33,11 +33,11 @@ impl AstNode {
     /// Check if the passed-in object is a valid AstNode.
     /// Returns null if it is, and an error otherwise.
     #[wasm_bindgen(js_name=checkError)]
-    pub fn check_error(value: &JsValue) -> JsValue {
+    pub fn check_error(value: &JsValue) -> Option<String> {
         let parsed: Result<AstNode, _> = value.into_serde();
         match parsed {
-            Ok(_) => JsValue::null(),
-            Err(e) => JsValue::from_serde(&format!("{:?}", e)).unwrap(),
+            Ok(_) => None,
+            Err(e) => Some(format!("{:?}", e)),
         }
     }
 
