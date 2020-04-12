@@ -30,7 +30,18 @@ impl AstNode {
         Ok(node)
     }
 
-    #[wasm_bindgen(js_name=empty)]
+    /// Check if the passed-in object is a valid AstNode.
+    /// Returns null if it is, and an error otherwise.
+    #[wasm_bindgen(js_name=checkError)]
+    pub fn check_error(value: &JsValue) -> JsValue {
+        let parsed: Result<AstNode, _> = value.into_serde();
+        match parsed {
+            Ok(_) => JsValue::null(),
+            Err(e) => JsValue::from_serde(&format!("{:?}", e)).unwrap(),
+        }
+    }
+
+    #[wasm_bindgen]
     pub fn empty() -> Self {
         Self {
             instruction: cc::InstructionNode::Pass,
@@ -92,7 +103,10 @@ impl CompilationUnit {
 
     #[wasm_bindgen(js_name=subProgramSet)]
     pub fn set_sub_program(&mut self, name: &str, start: NodeId) {
-        let sub_programs = self.inner.sub_programs.get_or_insert_with(|| Default::default());
+        let sub_programs = self
+            .inner
+            .sub_programs
+            .get_or_insert_with(|| Default::default());
         sub_programs.insert(name.to_owned(), cc::SubProgram { start });
     }
 

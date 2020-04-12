@@ -1,6 +1,6 @@
 [package]
 name = "cao-lang-wasm"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Daniel Kiss <littlesnorrboy@gmail.com>"]
 edition = "2018"
 description="Wrapper of [CaoLang](https://github.com/caolo-game/cao-lang.git)"
@@ -14,7 +14,7 @@ crate-type = ["cdylib", "rlib"]
 default = ["console_error_panic_hook"]
 
 [dependencies]
-cao-lang = { git = "https://github.com/caolo-game/cao-lang.git" }
+cao-lang = { git = "https://github.com/caolo-game/cao-lang.git", version = "0.4" }
 wasm-bindgen = { version="0.2", features=["serde-serialize"] }
 serde = "1"
 serde_derive = "1"
