@@ -43,7 +43,7 @@ fn check_error_returns_null_for_valid_node() {
 
     let res = AstNode::check_error(&node);
 
-    assert!(res.is_null(), "Valid nodes should return null");
+    assert!(res.is_none(), "Valid nodes should return null");
 }
 
 #[wasm_bindgen_test]
@@ -56,5 +56,5 @@ fn check_error_returns_error_for_invalid_node() {
 
     let res = AstNode::check_error(&node);
 
-    assert!(!res.is_null(), "Invalid nodes should not return null");
+    assert!(res.is_some(), "Invalid nodes should not return null");
 }
