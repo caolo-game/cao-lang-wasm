@@ -124,7 +124,7 @@ impl CompilationUnit {
         JsValue::from_serde(&sub_program).unwrap()
     }
 
-    #[wasm_bindgen(js_name=sub_programHas)]
+    #[wasm_bindgen(js_name=subProgramHas)]
     pub fn has_sub_program(&self, name: &str) -> bool {
         self.inner
             .sub_programs
