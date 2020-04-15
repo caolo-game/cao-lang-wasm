@@ -5,7 +5,7 @@
 extern crate wasm_bindgen_test;
 use wasm_bindgen_test::*;
 
-use cao_lang_wasm::{compile, AstNode, CompilationUnit};
+use cao_lang_wasm::{ast_node::AstNode, compilation_unit::CompilationUnit, compile};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::JsFuture;
 
