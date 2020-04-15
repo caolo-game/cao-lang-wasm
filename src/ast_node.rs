@@ -44,4 +44,64 @@ impl AstNode {
     pub fn load_instructon(&self) -> JsValue {
         JsValue::from_serde(&self.instruction).unwrap()
     }
+
+    /// Return the name of this AstNode variant
+    #[wasm_bindgen(js_name=variant)]
+    pub fn variant(&self) -> String {
+        self.instruction.name().to_owned()
+    }
+
+    /// Sets the instruction of `this` or throw an error if `instruction` was not a valid
+    /// Instruction instance.
+    #[wasm_bindgen(js_name=setInstruction)]
+    pub fn set_instruction(&mut self, instruction: JsValue) -> Result<(), JsValue> {
+        let instruction: cc::InstructionNode = instruction.into_serde().map_err(err_to_js)?;
+        self.instruction = instruction;
+        Ok(())
+    }
+
+    /// Sets the value of this instruction or throw an error if the input value was invalid.
+    #[wasm_bindgen(js_name=setValue)]
+    pub fn set_value(&mut self, value: JsValue) -> Result<(), JsValue> {
+        use cc::InstructionNode::*;
+
+        macro_rules! map_err {
+            () => {
+                |e| {
+                    let err = format!(
+                        "InstructionNode {:?} got an invalid value: {:?}, error: {:?}",
+                        self.instruction, value, e
+                    );
+                    JsValue::from_serde(&err).unwrap()
+                }
+            };
+        };
+
+        let mut instruction = self.instruction.clone();
+        match &mut instruction {
+            Start | Pass | Add | Sub | Mul | Div | Exit | CopyLast | Less | LessOrEq | Equals
+            | NotEquals | Pop | ClearStack => {
+                if !value.is_null() {
+                    return Err(JsValue::from_serde(&format!(
+                        "InstructionNode {:?} must have `null` value but {:?} was provided",
+                        self.instruction, value
+                    ))
+                    .unwrap());
+                }
+            }
+            ScalarInt(node) => *node = value.into_serde().map_err(map_err!())?,
+            ScalarFloat(node) => *node = value.into_serde().map_err(map_err!())?,
+            ScalarLabel(node) => *node = value.into_serde().map_err(map_err!())?,
+            ScalarArray(node) => *node = value.into_serde().map_err(map_err!())?,
+            StringLiteral(node) => *node = value.into_serde().map_err(map_err!())?,
+            Call(node) => *node = value.into_serde().map_err(map_err!())?,
+            JumpIfTrue(node) => *node = value.into_serde().map_err(map_err!())?,
+            Jump(node) => *node = value.into_serde().map_err(map_err!())?,
+            SetVar(node) => *node = value.into_serde().map_err(map_err!())?,
+            ReadVar(node) => *node = value.into_serde().map_err(map_err!())?,
+            SubProgram(node) => *node = value.into_serde().map_err(map_err!())?,
+        }
+        self.instruction = instruction;
+        Ok(())
+    }
 }
